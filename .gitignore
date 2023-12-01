@@ -1,0 +1,9 @@
+/.vscode
+/bin
+/data
+/include
+/lib
+/lib64
+/share
+
+pyvenv.cfg
