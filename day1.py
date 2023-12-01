@@ -18,15 +18,16 @@ if part1:
 else:
     num_dict.update(word_dict)   
 
-    val = 0
     starting_nums=[]
     ending_nums=[]
     for line_ in input_:
-        found_nums = sorted([(line_.find(x),y) for x,y in num_dict.items() if x in line_],key=lambda x:x[0])
-        starting_nums.append([str(x[1]) for x in found_nums][0])
+        #find first instance of all keys in the line, then sort by the found index
+        forward_nums = sorted([(line_.find(x),y) for x,y in num_dict.items() if x in line_],key=lambda x:x[0])
+        starting_nums.append([str(x[1]) for x in forward_nums][0])
         
-        found_nums2 = sorted([(line_[::-1].find(x[::-1]),y) for x,y in num_dict.items() if x in line_],key=lambda x:x[0])
-        ending_nums.append([str(x[1]) for x in found_nums2][0])
+        #reverse the line and the dictionary keys, then perform the same action
+        backward_nums = sorted([(line_[::-1].find(x[::-1]),y) for x,y in num_dict.items() if x in line_],key=lambda x:x[0])
+        ending_nums.append([str(x[1]) for x in backward_nums][0])
         
     pt2 = sum([int(x+y) for x,y in zip(starting_nums,ending_nums)])
     print("pt2",pt2)
