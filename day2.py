@@ -6,16 +6,17 @@ total_dict = {"red":12,"green":13,"blue":14}
 
 successful_games = []
 game_scores = []
-for ix, line_ in enumerate(input_):
-    sets_ = line_.split(": ")[1].split("; ")
+for ix, gameline_ in enumerate(input_):
+    sets_ = gameline_.split(": ")[1].split("; ")
     
     failed = False
     game_dict = defaultdict(lambda: 0)
     for set_ in sets_:
         set_dict = defaultdict(lambda: 0)
         for draw_ in set_.split(', '):
-            set_dict[draw_.split(' ')[1]] += int(draw_.split(' ')[0])
-            
+            for color_, count_ in draw_.split(' '):
+                set_dict[color_]+=int(count_) 
+
         for color_, count_ in set_dict.items():
             game_dict[color_] = max(game_dict[color_],count_)
             if count_ > total_dict[color_]:
