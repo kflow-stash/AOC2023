@@ -2,9 +2,7 @@ from collections import Counter
 from functools import cmp_to_key
 
 val_dict = {x:y for x,y in zip(['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'],range(13,0,-1))}
-
 input_ = open("data/day7.txt", "r").read().splitlines()
-
 hands = [x.split(" ") for x in input_]
 
 def hand_compare(h1,h2):
@@ -42,7 +40,6 @@ def hand_compare(h1,h2):
 pt2=False
 card_counts = [(sorted(Counter(x).items(),key = lambda x_: x_[1],reverse=True),x,int(y)) for x,y in hands]
 sorted_ = sorted(card_counts,key=cmp_to_key(hand_compare))
-
 score= 0
 for rank_, (hand,raw_,bid) in enumerate(sorted_):
     score+=(rank_+1)*bid
@@ -50,11 +47,8 @@ for rank_, (hand,raw_,bid) in enumerate(sorted_):
 print("pt1",score)
 
 val_dict = {x:y for x,y in zip(['A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2','J'],range(13,0,-1))}
-
 pt2=True
-card_counts = [(sorted(Counter(x).items(),key = lambda x_: x_[1],reverse=True),x,int(y)) for x,y in hands]
 sorted_ = sorted(card_counts,key=cmp_to_key(hand_compare))
-
 score= 0
 for rank_, (hand,raw_,bid) in enumerate(sorted_):
     score+=(rank_+1)*bid
