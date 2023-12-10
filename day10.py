@@ -37,27 +37,14 @@ while not found:
 
 print("pt1",(len(visited_nodes)) // 2)
 
-
-def divide_chunks(l, n):
-    for i in range(0, len(l), n):
-        yield l[i : i + n]
-        
-def count_walls(wall_dirs):
-    walls = [sum(x) for x in divide_chunks(wall_dirs,2)]
-    return len([x for x in walls if x == 0])
-
-int_nodes = []
+int_nodes = 0
 for y, row in enumerate(mat):
-    walls = []
+    walls = 0
     for x, cell in enumerate(row):
         if (y,x) in visited_nodes:
-            if map_[cell][1]==1:
-                walls.append(1)
-            if map_[cell][3]==1:
-                walls.append(-1)
+            walls+=map_[cell][1]
         else:
-            t = count_walls(walls)
-            if t % 2 == 1:
-                int_nodes.append((y,x))
+            if walls % 2 == 1:
+                int_nodes+=1
             
-print("pt2",len(int_nodes))
+print("pt2",int_nodes)
