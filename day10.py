@@ -23,7 +23,7 @@ graph[s_loc] = [x for x,y in graph.items() if s_loc in y]
 mat[s_loc[0]][s_loc[1]] = "L"
 graph = dict(graph)
 
-visited_nodes = [s_loc]
+visited_nodes = set()
 
 cell = s_loc
 found=False
@@ -32,7 +32,7 @@ while not found:
     if len(edges)==0:
         found=True
     else:
-        visited_nodes.append(edges[0])
+        visited_nodes.add(edges[0])
         cell = edges[0]
 
 print("pt1",(len(visited_nodes)) // 2)
