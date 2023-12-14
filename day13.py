@@ -1,63 +1,62 @@
-input_ = open("data/day13.txt", "r").read().replace(".","0").replace("O","1").replace("#","2").splitlines()
+import itertools as iter
 
-cols = [list(reversed(("2",) + x)) for x in zip(*input_)]
+input_ = open("data/day13.txt", "r").read().replace("#", "1").replace(".", "0").split("\n\n")
 
-val_ = 0
-for col in cols:
-    last_ix = 0
-    for ix in [ix for ix, v in enumerate(col) if v[0] == "2"]:
-        n = len([y for y in col[last_ix:ix] if y == "1"])
-        t = sum(range(ix,ix-n,-1))
-        last_ix = ix
-        val_+=t
+grids = []
+for grid in input_:
+    grid = [[int(y) for y in x] for x in grid.split("\n")]
+    grid_dict = {"rows": [tuple(x) for x in grid]}
+    grid_dict["cols"] = list(map(tuple, zip(*grid)))
+    grids.append(grid_dict)
 
-print("pt1",val_)
 
-def roll_row(a):
-    c = []
-    last_ix = 0
-    for ix in [ij+1 for ij, v in enumerate(a + [2]) if v == 2]:
-        c.extend(list(sorted([x for x in a[last_ix:ix]])))
-        last_ix = ix
-    return c
-   
-def roll(grid):
-    # roll north
-    cols = []
-    for col in [list(x) for x in map(reversed,zip(*grid))]:
-        cols.append(roll_row(col))
-    # roll west
-    rows = []
-    for row in [list(x) for x in map(reversed,zip(*cols))]:
-        rows.append(roll_row(row)) 
-    # roll south
-    cols = []
-    for row in [list(x) for x in map(reversed,zip(*rows))]:
-        cols.append(roll_row(row)) 
-    # roll east 
-    rows = []
-    for col in [list(x) for x in map(reversed,zip(*cols))]:
-        rows.append(roll_row(col)) 
-    return rows
-          
-result_list = []
-grid = [[int(y) for y in x] for x in input_]
-first_repeat = None
-while not first_repeat:
-    grid = roll(grid)
-    locs = {(ix,iy) for ix, x in enumerate(grid) for iy,y in enumerate(x) if y==1}
-    
-    if locs not in result_list:
-        result_list.append(locs)
+def lazy_compare(a, b, part1=True):
+    for diff in iter.accumulate(
+        abs(x - y)
+        for x, y in zip(
+            iter.chain.from_iterable(a),
+            iter.chain.from_iterable(b),
+        )
+    ):
+        if part1 and diff > 0:
+            return False
+        if diff > 1:
+            return False
+    if part1 and diff == 0:
+        return True
+    elif diff == 1:
+        return True
     else:
-        first_repeat = result_list.index(locs)
-        break
-
-repeat_length = len(result_list) - first_repeat
-remainder = (1000000000 - first_repeat) % repeat_length
-map_index = remainder + first_repeat
-
-all_ys = [len(grid)-y for (y,_) in list(result_list[map_index-1])]
+        return False
 
 
-print("pt2",sum(all_ys))
+part1 = True
+total_ = 0
+for grid in grids:
+    rows, cols = (
+        grid["rows"],
+        grid["cols"],
+    )
+    for ix in range(1, len(rows) // 2 + 1):
+        if lazy_compare(rows[:ix], reversed(rows[ix : (ix * 2)]), part1):
+            total_ += ix * 100
+            break
+
+        if lazy_compare(rows[-ix:], reversed(rows[-(ix * 2) : -ix]), part1):
+            total_ += (len(rows) - ix) * 100
+            break
+
+    for jx in range(1, len(cols) // 2 + 1):
+        if lazy_compare(cols[:jx], reversed(cols[jx : (jx * 2)]), part1):
+            total_ += jx
+            break
+
+        if lazy_compare(cols[-jx:], reversed(cols[-(jx * 2) : -jx]), part1):
+            total_ += len(cols) - jx
+            break
+
+
+if part1:
+    print("pt1", total_)
+else:
+    print("pt2", total_)
