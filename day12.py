@@ -37,7 +37,9 @@ def damage_full(ix, end_ix, chunk):
 
 
 def snap_in_right(chunk_ix, end_ix, built_map):
+    # if the recursion has found a spot for the last chunk
     if chunk_ix == len(sorted_chunks):
+        # double-check that the final sequence matches the input
         final_map = "".join(["." for _ in range(end_ix)]) + built_map
         if match_spring(final_map,spring):
             return 1
@@ -72,13 +74,14 @@ def snap_in_right(chunk_ix, end_ix, built_map):
 sum_ = 0
 for loop_ix, (group, spring) in enumerate(zip(groups, springs)):
 
-    total_maps = []
     chunk_cache = {}
 
+    #create a set of all of the indexes of the damage sequences exluding the first index of each sequence
+    #these are 'locked' indexes that cannot be used
     damages = list(
         set([(x, len(x)) for x in spring.replace("?", ".").split(".") if len(x) > 0])
     )
-
+    
     locks = set()
     for x, y in damages:
         locks = locks.union(
@@ -90,12 +93,16 @@ for loop_ix, (group, spring) in enumerate(zip(groups, springs)):
                 ]
             )
         )
-
+    #create a set of all explicitly damaged locations
     damage_locs = set([x for x, y in enumerate(spring) if y == "#"])
 
+    #append a '.' to every damage chunk to emulate the breaks between chunks required
     group_chunks = ["".join(list(iter.repeat("#", x)) + ["."]) for x in group]
+    #remove the final '.' from the last damage chunk
     group_chunks[-1] = group_chunks[-1][:-1]
 
+    #create a list of 'starting position guesses based on the accumulated value of sequence lengths
+    #sort the chunks in reverse order in order to perform the 'snap to right' function
     sorted_chunks = list(reversed(list(
         zip(group_chunks, [0] + list(iter.accumulate([len(x) for x in group_chunks])))
     )))
