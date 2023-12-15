@@ -22,7 +22,6 @@ for word in words:
     boxes[box].append((label,operation_))
     
 total_score=0
-box_items=defaultdict(lambda: [])
 for box_ix, box in boxes.items():
     labels = OrderedDict()
     for item in box:
@@ -34,8 +33,7 @@ for box_ix, box in boxes.items():
             
     for label_ix, (_,focal_length) in enumerate(labels.items()):
         total_score+=(box_ix+1)*(label_ix+1)*focal_length
-    box_items[box_ix].append(labels)
-      
+
         
 #print("pt1",total_)
 print("pt2",total_score)
