@@ -1,5 +1,5 @@
 from collections import defaultdict
-from copy import deepcopy
+from copy import deepcopy,copy
 import sys
 from sys import maxsize as INT_MAX
 from collections import deque
@@ -20,38 +20,34 @@ for vert in nodes.keys():
     
 def shortest_cycle(n1):
     #find the shortest cycle starting at n1 (does not double-back)
+    #store the path taken in the queue
     found = False
     parents = defaultdict(list)
     q = deque()
-    q.append((0,n1))
+    q.append((0,n1,[]))
     while q and not found:
-        node_dist, node = q.popleft()
-        print(node,nodes[node])
+        node_dist, node,path = q.popleft()
         for vert in nodes[node]:
             if vert==n1 and vert != parents[node]:
                 parents[vert] = node
                 q.clear()
                 found=True
+                path.append(n1)
                 break
-            elif dist[vert] >= node_dist+1:
-                q.append((node_dist+1,vert))
+            elif vert not in path:
+                p_ = copy(path)
+                p_.append(vert)
+                q.append((node_dist+1,vert,p_))
                 dist[vert] = node_dist+1
                 parents[vert]=node
-    if found:
-        path = set([node])
-        p = node
-        while p != n1:
-            p = parents[p]
-            path.add(p)
-    else:
-        stop_here = 1
 
     return frozenset(path)
    
 paths = set()
 for src in nodes.keys():
-    
+    print(src)
     paths.add(shortest_cycle(src))
+    
 
 default_ = list(paths)[0]
 cycle1 = set(default_)
